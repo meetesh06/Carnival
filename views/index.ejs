@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Criminal Identification Framework</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="css/style.css"  media="screen,projection"/>
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <header>
+            <% include shims/header.ejs %>
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="col s2"></div>
+                <form class="col s8 z-depth-2" action="/" method="post" encType="multipart/form-data">
+                    <h4 class="center">Detect Suspect</h4>
+                    <div class="row">
+                        <div class="col s2"></div>
+                        <div class="col s8">
+                            <div class="file-field input-field">
+                                <div class="btn blue">
+                                    <span>Upload Image</span>
+                                    <input id="file" type="file" name="suspect_image">
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input class="file-path validate" type="text">
+                                </div>
+                            </div>
+                            <button class="red btn-large btn waves-effect waves-light btn_submit" type="submit">Submit
+                            <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="progress">
+                          <div class="indeterminate"></div>
+                      </div>
+        
+                </form>
+            </div>        
+        </div>
+       
+
+        
+        <ul class="collection" id="suspects_holder">
+        </ul>
+        
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript">
+        $( document ).ready(function(){
+            $(".progress").hide();
+            $(".button-collapse").sideNav();
+            $("form").on("submit", function(){
+                $(".progress").show();
+
+                var formData = new FormData();
+                formData.append('suspect_image', $('#file')[0].files[0]);
+
+                var saveData = $.ajax({
+                    type: 'POST',
+                    url: "/",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(resultData) { 
+                        if(!resultData.error) {
+                            $(".progress").hide();
+                            $('form')[0].reset();
+
+                            $('#suspects_holder').val("");
+                            $('#suspects_holder').html("");
+                            
+                            var header = `
+                                <h4 class="center">Possible Matches</h4>
+                            `;
+
+                            $('#suspects_holder').append(header);
+
+                            for(i in resultData.data) {
+                                var item = `
+                                <a target="_blank" href="images/${resultData.data[i]}.jpg"> 
+                                    <li class="collection-item avatar">
+                                        <img src="images/${resultData.data[i]}.jpg" class="circle">
+                                        <span class="title">${i.split("_")[0]}</span>
+                                        <p>${i.split("_")[1]}
+                                        </p>
+                                    </li>
+                                </a>
+                                `;
+                                $('#suspects_holder').append(item);                                
+                            }
+
+
+                            Materialize.toast('Done', 4000)
+                            console.log(resultData.data);
+                        } else {
+                            Materialize.toast('An Error Has Occured', 4000)
+                        }
+                    }
+                });
+                return false;
+            })
+        });
+        </script>
+    </body>
+</html>

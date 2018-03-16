@@ -1,0 +1,19 @@
+{
+  "name": "criminal",
+  "version": "1.0.0",
+  "description": "This is a criminal face recognition framework",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Meetesh Mehta",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "crypto": "^1.0.1",
+    "ejs": "^2.5.7",
+    "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
+    "python-shell": "^0.5.0"
+  }
+}
